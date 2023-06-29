@@ -116,6 +116,10 @@ struct EventDetailView: View {
             ForEach($event.tasks) { $task in
                 TaskRow(task: $task)
             }
+            .onDelete { indexset in
+                print(indexset)
+                event.tasks.remove(atOffsets: indexset)
+            }
             Button {
                 print("clicked on new task")
                 event.createNewTask()
@@ -192,11 +196,18 @@ struct TaskRow: View {
                 Text(task.text)
             } else {
                 TextField("", text: $task.text, prompt: Text("enter ur task info"))
-//                    .focused($isFocused)
-//                    .onChange(of: isFocused) { newValue in
-//                        isFocused = newValue
-//                       // task.isNew = false
-//                    }
+                    .focused($isFocused)
+                    .onChange(of: isFocused) { newValue in
+                        print(newValue)
+                        if newValue == false && !task.text.isEmpty {
+                            task.isNew = false
+                        }
+                    }
+            }
+        }.task {
+            //-- not working properly need to check it
+            if task.isNew == true {
+                isFocused = true
             }
         }
     }
